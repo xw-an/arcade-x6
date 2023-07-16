@@ -1,0 +1,1 @@
+{"version":3,"file":"port.js","sourceRoot":"","sources":["../../../src/registry/attr/port.ts"],"names":[],"mappings":"AAEA,MAAM,CAAC,MAAM,IAAI,GAAoB;IACnC,GAAG,CAAC,IAAI;QACN,IAAI,IAAI,IAAI,IAAI,IAAI,OAAO,IAAI,KAAK,QAAQ,IAAI,IAAI,CAAC,EAAE,EAAE;YACvD,OAAO,IAAI,CAAC,EAAY,CAAA;SACzB;QACD,OAAO,IAAc,CAAA;IACvB,CAAC;CACF,CAAA"}

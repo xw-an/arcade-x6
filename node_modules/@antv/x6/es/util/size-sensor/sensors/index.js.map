@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/util/size-sensor/sensors/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,IAAI,kBAAkB,EAAE,MAAM,UAAU,CAAA;AAC7D,OAAO,EAAE,YAAY,IAAI,0BAA0B,EAAE,MAAM,YAAY,CAAA;AAEvE,MAAM,CAAC,MAAM,YAAY,GACvB,OAAO,cAAc,KAAK,WAAW;IACnC,CAAC,CAAC,0BAA0B;IAC5B,CAAC,CAAC,kBAAkB,CAAA"}

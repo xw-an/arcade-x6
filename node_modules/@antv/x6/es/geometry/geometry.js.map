@@ -1,0 +1,1 @@
+{"version":3,"file":"geometry.js","sourceRoot":"","sources":["../../src/geometry/geometry.ts"],"names":[],"mappings":"AAGA,MAAM,OAAgB,QAAQ;IAwB5B,OAAO;QACL,OAAO,IAAI,CAAC,MAAM,EAAE,CAAA;IACtB,CAAC;IAED,QAAQ;QACN,OAAO,IAAI,CAAC,SAAS,CAAC,IAAI,CAAC,MAAM,EAAE,CAAC,CAAA;IACtC,CAAC;CACF"}

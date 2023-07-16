@@ -1,0 +1,1 @@
+{"version":3,"file":"polyline.js","sourceRoot":"","sources":["../../../src/shape/basic/polyline.ts"],"names":[],"mappings":";;;AAAA,+BAAoC;AAEvB,QAAA,QAAQ,GAAG,IAAA,kBAAW,EAAC,UAAU,EAAE;IAC9C,KAAK,EAAE,EAAE;IACT,MAAM,EAAE,EAAE;IACV,KAAK,EAAE;QACL,IAAI,EAAE;YACJ,IAAI,EAAE,IAAI;YACV,KAAK,EAAE,EAAE;SACV;KACF;CACF,CAAC,CAAA"}

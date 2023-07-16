@@ -1,0 +1,415 @@
+import { Util } from '../../global';
+import { StringExt, FunctionExt } from '../../util';
+import { Point, Rectangle, Angle } from '../../geometry';
+import { Cell } from '../../model/cell';
+import { notify } from '../transform/util';
+export class NodePreset {
+    constructor(halo) {
+        this.halo = halo;
+    }
+    get options() {
+        return this.halo.options;
+    }
+    get graph() {
+        return this.halo.graph;
+    }
+    get model() {
+        return this.halo.model;
+    }
+    get view() {
+        return this.halo.view;
+    }
+    get cell() {
+        return this.halo.cell;
+    }
+    get node() {
+        return this.cell;
+    }
+    getPresets() {
+        return {
+            className: 'type-node',
+            handles: [
+                {
+                    name: 'remove',
+                    position: 'nw',
+                    events: {
+                        mousedown: this.removeCell.bind(this),
+                    },
+                    icon: null,
+                },
+                {
+                    name: 'resize',
+                    position: 'se',
+                    events: {
+                        mousedown: this.startResize.bind(this),
+                        mousemove: this.doResize.bind(this),
+                        mouseup: this.stopResize.bind(this),
+                    },
+                    icon: null,
+                },
+                {
+                    name: 'clone',
+                    position: 'n',
+                    events: {
+                        mousedown: this.startClone.bind(this),
+                        mousemove: this.doClone.bind(this),
+                        mouseup: this.stopClone.bind(this),
+                    },
+                    icon: null,
+                },
+                {
+                    name: 'link',
+                    position: 'e',
+                    events: {
+                        mousedown: this.startLink.bind(this),
+                        mousemove: this.doLink.bind(this),
+                        mouseup: this.stopLink.bind(this),
+                    },
+                    icon: null,
+                },
+                {
+                    name: 'fork',
+                    position: 'ne',
+                    events: {
+                        mousedown: this.startFork.bind(this),
+                        mousemove: this.doFork.bind(this),
+                        mouseup: this.stopFork.bind(this),
+                    },
+                    icon: null,
+                },
+                {
+                    name: 'unlink',
+                    position: 'w',
+                    events: {
+                        mousedown: this.unlink.bind(this),
+                    },
+                    icon: null,
+                },
+                {
+                    name: 'rotate',
+                    position: 'sw',
+                    events: {
+                        mousedown: this.startRotate.bind(this),
+                        mousemove: this.doRotate.bind(this),
+                        mouseup: this.stopRotate.bind(this),
+                    },
+                    icon: null,
+                },
+            ],
+            bbox(view) {
+                if (this.options.useCellGeometry) {
+                    const node = view.cell;
+                    return node.getBBox();
+                }
+                return view.getBBox();
+            },
+            content(view) {
+                const template = StringExt.template('x: <%= x %>, y: <%= y %>, width: <%= width %>, height: <%= height %>, angle: <%= angle %>');
+                const cell = view.cell;
+                const bbox = cell.getBBox();
+                return template({
+                    x: Math.floor(bbox.x),
+                    y: Math.floor(bbox.y),
+                    width: Math.floor(bbox.width),
+                    height: Math.floor(bbox.height),
+                    angle: Math.floor(cell.getAngle()),
+                });
+            },
+            magnet(view) {
+                return view.container;
+            },
+            tinyThreshold: 40,
+            smallThreshold: 80,
+            loopEdgePreferredSide: 'top',
+            loopEdgeWidth: 40,
+            rotateGrid: 15,
+            rotateEmbeds: false,
+        };
+    }
+    removeCell() {
+        this.model.removeConnectedEdges(this.cell);
+        this.cell.remove();
+    }
+    // #region create edge
+    startLink({ x, y }) {
+        this.halo.startBatch();
+        const graph = this.graph;
+        const edge = this.createEdgeConnectedToSource();
+        edge.setTarget({ x, y });
+        this.model.addEdge(edge, {
+            validation: false,
+            halo: this.halo.cid,
+            async: false,
+        });
+        graph.view.undelegateEvents();
+        this.edgeView = graph.renderer.findViewByCell(edge);
+        this.edgeView.prepareArrowheadDragging('target', {
+            x,
+            y,
+            fallbackAction: 'remove',
+        });
+    }
+    createEdgeConnectedToSource() {
+        const magnet = this.getMagnet(this.view, 'source');
+        const terminal = this.getEdgeTerminal(this.view, magnet);
+        const edge = this.graph.hook.getDefaultEdge(this.view, magnet);
+        edge.setSource(terminal);
+        return edge;
+    }
+    getMagnet(view, terminal) {
+        const magnet = this.options.magnet;
+        if (typeof magnet === 'function') {
+            const val = FunctionExt.call(magnet, this.halo, view, terminal);
+            if (val instanceof SVGElement) {
+                return val;
+            }
+        }
+        throw new Error('`magnet()` has to return an SVGElement');
+    }
+    getEdgeTerminal(view, magnet) {
+        const terminal = {
+            cell: view.cell.id,
+        };
+        if (magnet !== view.container) {
+            const port = magnet.getAttribute('port');
+            if (port) {
+                terminal.port = port;
+            }
+            else {
+                terminal.selector = view.getSelector(magnet);
+            }
+        }
+        return terminal;
+    }
+    doLink({ e, x, y }) {
+        if (this.edgeView) {
+            this.edgeView.onMouseMove(e, x, y);
+        }
+    }
+    stopLink({ e, x, y }) {
+        const edgeView = this.edgeView;
+        if (edgeView) {
+            edgeView.onMouseUp(e, x, y);
+            const edge = edgeView.cell;
+            if (edge.hasLoop()) {
+                this.makeLoopEdge(edge);
+            }
+            this.halo.stopBatch();
+            this.halo.trigger('action:edge:addde', { edge });
+            this.edgeView = null;
+        }
+        this.graph.view.delegateEvents();
+    }
+    makeLoopEdge(edge) {
+        let vertex1 = null;
+        let vertex2 = null;
+        const loopEdgeWidth = this.options.loopEdgeWidth;
+        const graphOptions = this.graph.options;
+        const graphRect = new Rectangle(0, 0, graphOptions.width, graphOptions.height);
+        const bbox = this.graph.graphToLocal(this.view.getBBox());
+        const found = [
+            this.options.loopEdgePreferredSide,
+            'top',
+            'bottom',
+            'left',
+            'right',
+        ].some((position) => {
+            let point = null;
+            let dx = 0;
+            let dy = 0;
+            switch (position) {
+                case 'top':
+                    point = new Point(bbox.x + bbox.width / 2, bbox.y - loopEdgeWidth);
+                    dx = loopEdgeWidth / 2;
+                    break;
+                case 'bottom':
+                    point = new Point(bbox.x + bbox.width / 2, bbox.y + bbox.height + loopEdgeWidth);
+                    dx = loopEdgeWidth / 2;
+                    break;
+                case 'left':
+                    point = new Point(bbox.x - loopEdgeWidth, bbox.y + bbox.height / 2);
+                    dy = loopEdgeWidth / 2;
+                    break;
+                case 'right':
+                    point = new Point(bbox.x + bbox.width + loopEdgeWidth, bbox.y + bbox.height / 2);
+                    dy = loopEdgeWidth / 2;
+                    break;
+                default:
+                    break;
+            }
+            if (point) {
+                vertex1 = point.translate(-dx, -dy);
+                vertex2 = point.translate(dx, dy);
+                return (graphRect.containsPoint(vertex1) && graphRect.containsPoint(vertex2));
+            }
+            return false;
+        });
+        if (found && vertex1 && vertex2) {
+            edge.setVertices([vertex1, vertex2]);
+        }
+    }
+    // #endregion
+    // #region resize
+    startResize({ e }) {
+        this.halo.startBatch();
+        this.flip = [1, 0, 0, 1, 1, 0, 0, 1][Math.floor(Angle.normalize(this.node.getAngle()) / 45)];
+        this.view.addClass('node-resizing');
+        notify('node:resize', e, this.view);
+    }
+    doResize({ e, dx, dy }) {
+        const size = this.node.getSize();
+        const width = Math.max(size.width + (this.flip ? dx : dy), 1);
+        const height = Math.max(size.height + (this.flip ? dy : dx), 1);
+        this.node.resize(width, height, {
+            absolute: true,
+        });
+        notify('node:resizing', e, this.view);
+    }
+    stopResize({ e }) {
+        this.view.removeClass('node-resizing');
+        notify('node:resized', e, this.view);
+        this.halo.stopBatch();
+    }
+    // #endregion
+    // #region clone
+    startClone({ e, x, y }) {
+        this.halo.startBatch();
+        const options = this.options;
+        const cloned = options.clone(this.cell, {
+            clone: true,
+        });
+        if (!Cell.isCell(cloned)) {
+            throw new Error("option 'clone()' has to return a cell");
+        }
+        this.centerNodeAtCursor(cloned, x, y);
+        this.model.addCell(cloned, {
+            halo: this.halo.cid,
+            async: false,
+        });
+        const cloneView = this.graph.renderer.findViewByCell(cloned);
+        cloneView.onMouseDown(e, x, y);
+        this.halo.setEventData(e, { cloneView });
+    }
+    centerNodeAtCursor(cell, x, y) {
+        const center = cell.getBBox().getCenter();
+        const dx = x - center.x;
+        const dy = y - center.y;
+        cell.translate(dx, dy);
+    }
+    doClone({ e, x, y }) {
+        const view = this.halo.getEventData(e).cloneView;
+        if (view) {
+            view.onMouseMove(e, x, y);
+        }
+    }
+    stopClone({ e, x, y }) {
+        const nodeView = this.halo.getEventData(e).cloneView;
+        if (nodeView) {
+            nodeView.onMouseUp(e, x, y);
+        }
+        this.halo.stopBatch();
+    }
+    // #endregion
+    // #region fork
+    startFork({ e, x, y }) {
+        this.halo.startBatch();
+        const cloned = this.options.clone(this.cell, {
+            fork: true,
+        });
+        if (!Cell.isCell(cloned)) {
+            throw new Error("option 'clone()' has to return a cell");
+        }
+        this.centerNodeAtCursor(cloned, x, y);
+        this.model.addCell(cloned, {
+            halo: this.halo.cid,
+            async: false,
+        });
+        const edge = this.createEdgeConnectedToSource();
+        const cloneView = this.graph.renderer.findViewByCell(cloned);
+        const magnet = this.getMagnet(cloneView, 'target');
+        const terminal = this.getEdgeTerminal(cloneView, magnet);
+        edge.setTarget(terminal);
+        this.model.addEdge(edge, {
+            halo: this.halo.cid,
+            async: false,
+        });
+        cloneView.onMouseDown(e, x, y);
+        this.halo.setEventData(e, { cloneView });
+    }
+    doFork({ e, x, y }) {
+        const view = this.halo.getEventData(e).cloneView;
+        if (view) {
+            view.onMouseMove(e, x, y);
+        }
+    }
+    stopFork({ e, x, y }) {
+        const view = this.halo.getEventData(e).cloneView;
+        if (view) {
+            view.onMouseUp(e, x, y);
+        }
+        this.halo.stopBatch();
+    }
+    // #endregion
+    // #region rotate
+    startRotate({ e, x, y }) {
+        this.halo.startBatch();
+        const center = this.node.getBBox().getCenter();
+        const nodes = [this.node];
+        if (this.options.rotateEmbeds) {
+            this.node
+                .getDescendants({
+                deep: true,
+            })
+                .reduce((memo, cell) => {
+                if (cell.isNode()) {
+                    memo.push(cell);
+                }
+                return memo;
+            }, nodes);
+        }
+        this.halo.setEventData(e, {
+            center,
+            nodes,
+            rotateStartAngles: nodes.map((node) => node.getAngle()),
+            clientStartAngle: new Point(x, y).theta(center),
+        });
+        nodes.forEach((node) => {
+            const view = this.graph.findViewByCell(node);
+            if (view) {
+                view.addClass('node-rotating');
+                notify('node:rotate', e, view);
+            }
+        });
+    }
+    doRotate({ e, x, y }) {
+        const data = this.halo.getEventData(e);
+        const delta = data.clientStartAngle - new Point(x, y).theta(data.center);
+        data.nodes.forEach((node, index) => {
+            const startAngle = data.rotateStartAngles[index];
+            const targetAngle = Util.snapToGrid(startAngle + delta, this.options.rotateGrid);
+            node.rotate(targetAngle, {
+                absolute: true,
+                center: data.center,
+                halo: this.halo.cid,
+            });
+            notify('node:rotating', e, this.graph.findViewByCell(node));
+        });
+    }
+    stopRotate({ e }) {
+        const data = this.halo.getEventData(e);
+        data.nodes.forEach((node) => {
+            const view = this.graph.findViewByCell(node);
+            view.removeClass('node-rotating');
+            notify('node:rotated', e, view);
+        });
+        this.halo.stopBatch();
+    }
+    // #endregion
+    // #region unlink
+    unlink() {
+        this.halo.startBatch();
+        this.model.removeConnectedEdges(this.cell);
+        this.halo.stopBatch();
+    }
+}
+//# sourceMappingURL=node-preset.js.map

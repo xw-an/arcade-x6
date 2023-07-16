@@ -1,0 +1,1 @@
+{"version":3,"file":"prefix.test.js","sourceRoot":"","sources":["../../../src/util/dom/prefix.test.ts"],"names":[],"mappings":";;AAAA,mCAAgD;AAEhD,QAAQ,CAAC,KAAK,EAAE;IACd,QAAQ,CAAC,SAAS,EAAE;QAClB,EAAE,CAAC,qDAAqD,EAAE;YACxD,MAAM,CAAC,IAAA,8BAAqB,EAAC,UAAU,CAAC,CAAC,CAAC,IAAI,CAAC,gBAAgB,CAAC,CAAA;QAClE,CAAC,CAAC,CAAA;IACJ,CAAC,CAAC,CAAA;AACJ,CAAC,CAAC,CAAA"}

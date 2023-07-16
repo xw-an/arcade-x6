@@ -1,0 +1,1 @@
+{"version":3,"file":"ellipse.js","sourceRoot":"","sources":["../../../src/shape/standard/ellipse.ts"],"names":[],"mappings":";;;AAAA,+BAAoC;AAEvB,QAAA,OAAO,GAAG,IAAA,kBAAW,EAAC,SAAS,EAAE;IAC5C,KAAK,EAAE;QACL,IAAI,EAAE;YACJ,KAAK,EAAE,KAAK;YACZ,KAAK,EAAE,KAAK;YACZ,KAAK,EAAE,KAAK;YACZ,KAAK,EAAE,KAAK;SACb;KACF;CACF,CAAC,CAAA"}

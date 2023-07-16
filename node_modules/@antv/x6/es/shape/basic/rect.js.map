@@ -1,0 +1,1 @@
+{"version":3,"file":"rect.js","sourceRoot":"","sources":["../../../src/shape/basic/rect.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,MAAM,QAAQ,CAAA;AAEpC,MAAM,CAAC,MAAM,IAAI,GAAG,WAAW,CAAC,MAAM,EAAE;IACtC,KAAK,EAAE;QACL,IAAI,EAAE;YACJ,KAAK,EAAE,GAAG;YACV,MAAM,EAAE,EAAE;SACX;KACF;CACF,CAAC,CAAA"}

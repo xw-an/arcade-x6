@@ -1,0 +1,1 @@
+{"version":3,"file":"style.js","sourceRoot":"","sources":["../../../src/registry/attr/style.ts"],"names":[],"mappings":";;;AAAA,mCAAsC;AAGzB,QAAA,KAAK,GAAoB;IACpC,OAAO,EAAE,gBAAS,CAAC,aAAa;IAChC,GAAG,EAAH,UAAI,MAAM,EAAE,EAAc;YAAZ,IAAI,UAAA,EAAE,IAAI,UAAA;QACtB,IAAI,CAAC,CAAC,CAAC,IAAI,CAAC,CAAC,GAAG,CAAC,MAA6C,CAAC,CAAA;IACjE,CAAC;CACF,CAAA"}
