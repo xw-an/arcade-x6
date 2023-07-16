@@ -10,17 +10,28 @@
 - 组件调试：提供调试功能，让用户能够在开发阶段验证组件的正确性和可靠性。
 - 查看组件详情：展示组件的详细信息，包括输入输出参数、使用示例等，帮助用户全面了解组件的功能和用法。
 - 组件调用日志：记录组件调用过程中的日志信息，便于排查问题和分析性能。
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/b1034ca6-07de-40e6-860e-4f77cd00cee5)
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/cc99f9d0-72b2-407c-9058-40045caa35fc)
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/941017ba-b344-4749-8469-6801983890f5)
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/eb552d30-5b2e-4944-817e-1a7631dfe89e)
 
 ### 流程列表模块
 
 - 创建流程实例：用户可以通过流程列表模块创建新的流程实例，灵活定义流程的各个步骤和逻辑。
 - 流程画布编辑器：提供直观的流程编辑界面，支持多种不同类型组件的编排和连接，帮助用户轻松设计流程。
 - 流程实例版本控制：支持对流程实例进行版本管理，方便用户在开发和维护过程中进行迭代和升级。
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/16f8f048-a97c-41aa-8695-6d3d49c26873)
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/72fb9d47-14d5-4c31-af98-3f2c79ca75d4)
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/d6a917ce-6c28-4e26-8d4a-c33c07b2877e)
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/cb2c9dbd-b8f5-4bc6-88ad-f41f1e7dc6c2)
 
 ### 任务管理模块
 
 - 查看所有流程实例的执行任务：用户可以在任务管理模块中查看所有流程实例的执行任务，了解流程的进展情况。
 - 执行日志监控：提供实时的执行日志监控功能，用户可以随时查看流程实例的执行情况和日志信息。
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/d5578ab2-d10c-4008-a973-cda60a6962fb)
+![image](https://github.com/xw-an/arcade-x6/assets/9762767/499cc340-58f1-4a55-8185-ef346f464e50)
+
 
 ## 技术栈
 
