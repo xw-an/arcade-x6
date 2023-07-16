@@ -56,7 +56,7 @@
 
 ## 相关的后端项目
 - 项目仓库地址：[https://github.com/xw-an/arcade-x6-api.git](https://github.com/xw-an/arcade-x6-api.git)
-- 项目描述：该流程编排后端对应的前端项目
+- 项目描述：该项目对应的后端项目
 
 
    
