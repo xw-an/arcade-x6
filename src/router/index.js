@@ -12,19 +12,19 @@ const routes = [
     children: [
       {
         path: '/tools',
-        name: '工具列表',
+        name: '组件列表',
         component: () => import('@/views/tools/ToolsList'),
         meta: {requireAuth: true}
       },
       {
         path: '/tools/detail/:id',
-        name: '工具详情',
+        name: '组件详情',
         component: () => import('@/views/tools/ToolDetail'),
         meta: {requireAuth: true}
       },
       {
         path: '/flows',
-        name: '工具流程',
+        name: '流程列表',
         component: () => import('@/views/flows/FlowsList'),
         meta: {requireAuth: true}
       },

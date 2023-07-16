@@ -42,7 +42,7 @@ const useMenuEffect = () =>{
     {
       id: 1,
       icon: 'ToolOutlined',
-      name: '工具列表',
+      name: '组件列表',
       path: '/tools'
     },
     {
