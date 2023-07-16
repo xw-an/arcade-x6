@@ -54,5 +54,9 @@
 ## 贡献
 如果你对该项目有兴趣并希望贡献代码，欢迎提交 Pull Request。在提交之前，请确保你的代码符合项目的编码规范，并附上清晰的描述和详细的测试结果。
 
+## 相关的后端项目
+- 项目仓库地址：[https://github.com/xw-an/arcade-x6-api.git](https://github.com/xw-an/arcade-x6-api.git)https://github.com/xw-an/arcade-x6-api.git
+- 项目描述：该流程编排后端对应的前端项目
+
 
    
