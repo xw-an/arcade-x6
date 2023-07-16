@@ -8,20 +8,20 @@ export const Service = axios.create({
 
 switch (document.documentElement.dataset.vanEnv) {
   case "dev":
-    Service.defaults.baseURL = "/qa-arcade-api";
+    Service.defaults.baseURL = "/arcade-x6-api";
     break;
   case "stg":
-    Service.defaults.baseURL ="https://qa-arcade-api-stg.work";
+    Service.defaults.baseURL ="https://arcade-x6-api-stg.work";
     break;
   case "pre":
-    Service.defaults.baseURL = "https://qa-arcade-api-pre.work";
+    Service.defaults.baseURL = "https://arcade-x6-api-pre.work";
     break;
   case "prod":
-    Service.defaults.baseURL = "https://qa-arcade-api.work";
+    Service.defaults.baseURL = "https://arcade-x6-api.work";
     break;
   default:
     // 本地开发时会走到 default
-    Service.defaults.baseURL = "/qa-arcade-api";
+    Service.defaults.baseURL = "/arcade-x6-api";
 }
 
 // 添加请求拦截器
